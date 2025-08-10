@@ -24,7 +24,7 @@ public class CoinController {
      * @param userRequest 包含 userId 和 benefit 的请求体
      * @return 返回一个包含所有被更新过的用户列表
      */
-    @PostMapping("/caculate")
+    @PostMapping("/calculate")
     public ResponseEntity<List<User>> caculate(@RequestBody UserRequest userRequest) {
         List<User> userList = coinService.caculateCoins(
                 userRequest.getUserId(),

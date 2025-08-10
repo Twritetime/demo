@@ -93,6 +93,7 @@ rule "Calculate and Assign Copper Coins"
     salience 1
     dialect "mvel"
     when
+        exists User(benefit > 0)
         $user : User()
     then
         int maxDirectChildLevel = 0;
