@@ -1,0 +1,13 @@
+package rules;
+import com.example.demo.model.entity.User;
+
+rule "Assign Gold Coins to Parent"
+    dialect "mvel"
+    when
+        $child : User(benefit > 0, parentId != null)
+        $parent : User(id == $child.parentId)
+    then
+        double coin = $child.getBenefit() * 0.15;
+        $parent.setGoldCoin($parent.getGoldCoin() + coin);
+        modify($parent){}
+end

@@ -1,0 +1,45 @@
+package rules;
+import com.example.demo.model.entity.User;
+
+rule "Initialize Subordinates Max Level"
+    salience 10
+    dialect "mvel"
+    when
+        $user : User(subordinatesMaxLevel == 0)
+    then
+        modify($user){setSubordinatesMaxLevel($user.getLevel())}
+end
+
+rule "Propagate Max Level to Parent"
+    salience 5
+    dialect "mvel"
+    when
+        $child : User(parentId != null)
+        $parent : User(id == $child.parentId)
+        eval($child.getSubordinatesMaxLevel() > $parent.getSubordinatesMaxLevel())
+    then
+        modify($parent) { setSubordinatesMaxLevel($child.getSubordinatesMaxLevel()) };
+end
+
+rule "Calculate and Assign Copper Coins"
+    salience 1
+    dialect "mvel"
+    when
+        $user : User()
+    then
+        int maxDirectChildLevel = 0;
+        for (Object obj : kcontext.getKieRuntime().getObjects()) {
+            if (obj instanceof User) {
+                User child = (User) obj;
+                if ($user.getId().equals(child.getParentId()) && child.getLevel() > maxDirectChildLevel) {
+                    maxDirectChildLevel = child.getLevel();
+                }
+            }
+        }
+        int levelGap = $user.getLevel() - maxDirectChildLevel;
+        if (levelGap > 0) {
+            int coin = levelGap * 10;
+            $user.setCopperCoin($user.getCopperCoin() + coin);
+            modify($user) {};
+        }
+end

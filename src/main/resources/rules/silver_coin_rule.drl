@@ -1,0 +1,11 @@
+package rules;
+import com.example.demo.model.entity.User;
+
+rule "Assign Silver Coins to Self"
+    dialect "mvel"
+    when
+        $user : User(benefit > 0)
+    then
+        $user.setSilverCoin($user.getSilverCoin() + 20);
+        modify($user){setBenefit(0)}
+end
