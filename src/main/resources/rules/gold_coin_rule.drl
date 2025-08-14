@@ -1,13 +1,19 @@
 package rules;
 import com.example.demo.model.entity.User;
 
-rule "Assign Gold Coins to Parent"
+// 规则：给上级分配金币
+rule "给上级分配金币"
     dialect "mvel"
     when
+        // 当一个下级产生了收益，并且他有上级时
         $child : User(benefit > 0, parentId != null)
+        // 找到这个下级的上级
         $parent : User(id == $child.parentId)
     then
+        // 计算金币奖励（收益的15%）
         double coin = $child.getBenefit() * 0.15;
+        // 将计算出的金币添加到上级的账户
         $parent.setGoldCoin($parent.getGoldCoin() + coin);
+        // 更新上级对象的状态
         modify($parent){}
 end

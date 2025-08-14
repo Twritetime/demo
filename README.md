@@ -27,9 +27,9 @@
 ### 3. 对父级链的分配（铜币 - 级差分配）
 
 - **规则**: 系统会根据一个树状的层级关系，对自己以及自己的所有上级（父1、父2、父3等）进行铜币奖励的分配。该分配方式基于“级差”计算。
-- **级差计算**: `当前层级的级别 - 其所有直属下级中的最高级别`。
+- **级差计算**: `当前用户的级别 - 其所有下级（直接和间接）中的最高级别`。
 - **铜币计算**: `级差 * 10`。
-- **目的**: 奖励那些有效管理和提升团队整体级别的领导者。级别差越大，说明其团队发展越健康，获得的奖励也越多。
+- **目的**: 奖励那些有效管理和提升团队整体级别的领导者。用户的级别与其下级团队的最高级别差距越大，获得的奖励也越多。
 
 ### 4. 动态规则热重载
 
@@ -44,7 +44,7 @@
 - **请求体**:
   ```json
   {
-    "userId": 1,
+    "userId": 5,
     "benefit": 100.0
   }
   ```
@@ -66,35 +66,35 @@
       U2 --> U4
       U3 --> U5
   ```
-  当您发送请求 `{"userId": 4, "benefit": 100.0}` 时，API会返回从触发者 `User 4` 到其顶级上级 `User 1` 的用户链信息，其中包含了经过所有规则计算后的奖励。
+  当您发送请求 `{"userId": 5, "benefit": 100.0}` 时，API会返回从触发者 `User 5` 到其顶级上级 `User 1` 的用户链信息，其中包含了经过所有规则计算后的奖励。
   ```json
   [
     {
-      "id": 4,
-      "name": "Me (L2)",
-      "level": 2,
-      "parentId": 2,
-      "goldCoin": 0.0,
-      "silverCoin": 20,
-      "copperCoin": 20
+        "id": 5,
+        "name": "Other (L1)",
+        "level": 1,
+        "parentId": 3,
+        "goldCoin": 0.0,
+        "silverCoin": 20,
+        "copperCoin": 0
     },
     {
-      "id": 2,
-      "name": "Parent1 (L3)",
-      "level": 3,
-      "parentId": 1,
-      "goldCoin": 15.0,
-      "silverCoin": 0,
-      "copperCoin": 10
+        "id": 3,
+        "name": "Parent2 (L2)",
+        "level": 2,
+        "parentId": 1,
+        "goldCoin": 15.0,
+        "silverCoin": 0,
+        "copperCoin": 10
     },
     {
-      "id": 1,
-      "name": "GrandParent (L4)",
-      "level": 4,
-      "parentId": null,
-      "goldCoin": 0.0,
-      "silverCoin": 0,
-      "copperCoin": 10
+        "id": 1,
+        "name": "GrandParent (L4)",
+        "level": 4,
+        "parentId": null,
+        "goldCoin": 0.0,
+        "silverCoin": 0,
+        "copperCoin": 10
     }
   ]
   ```

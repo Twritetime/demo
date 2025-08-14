@@ -1,11 +1,15 @@
 package rules;
 import com.example.demo.model.entity.User;
 
-rule "Assign Silver Coins to Self"
+// 规则：给自己分配银币
+rule "给自己分配银币"
     dialect "mvel"
     when
+        // 当任何用户产生了收益时
         $user : User(benefit > 0)
     then
+        // 该用户获得固定的20个银币
         $user.setSilverCoin($user.getSilverCoin() + 20);
+        // 将该用户的收益清零，防止重复计算
         modify($user){setBenefit(0)}
 end
